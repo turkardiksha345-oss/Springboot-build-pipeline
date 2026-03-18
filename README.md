@@ -8,7 +8,7 @@ Prereq: Create 2 EC2 servers
 
  Sonarqube server with 4 GB memory - t2.medium
 
-Step 1: Ensure all the necessary plugins are installed in Jenkins Master
+## Step 1: Ensure all the necessary plugins are installed in Jenkins Master
 
 
 
@@ -24,13 +24,13 @@ Step 1: Ensure all the necessary plugins are installed in Jenkins Master
 
  Quality Gates
 
-Step 2: Install Docker, Java8, Java11 & Trivy on Build Server
+## Step 2: Install Docker, Java8, Java11 & Trivy on Build Server
 
 
 $ sudo ./setup.sh
 
 
-Step 3: Install Sonrqube on the t2.medium server
+## Step 3: Install Sonrqube on the t2.medium server
 
 
 $ sudo apt update
@@ -39,7 +39,7 @@ $ sudo usermod -a -G docker ubuntu
 $ sudo docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 
 
-Step 4: Add necessary credentials
+## Step 4: Add necessary credentials
 
 
 
@@ -51,7 +51,7 @@ Step 4: Add necessary credentials
 
  Add Build server credentials for Jenkins master to connect
 
-Step 5: Enable Sonarqube webhook for Quality Gates & Install dependency-check plugin
+## Step 5: Enable Sonarqube webhook for Quality Gates & Install dependency-check plugin
 
 
 
