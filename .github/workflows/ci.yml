@@ -76,7 +76,7 @@ jobs:
       - name: Scan Docker Image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: $REGISTRY:latest
+          image-ref: ${{ env.REGISTRY }}:latest
 
       # 🔹 Smoke Test
       - name: Smoke Test
