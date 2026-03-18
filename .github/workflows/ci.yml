@@ -12,17 +12,18 @@ jobs:
       REGISTRY: dikshat1024/democicd
 
     steps:
-      # ✅ Checkout (GitHub repo directly)
+      # ✅ Checkout the repo
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 🔹 Debug Env
+      # 🔹 Debug Environment
       - name: Debug Environment
         run: |
           echo "USER: $(whoami)"
           echo "HOST: $(hostname)"
           which mvn || echo "mvn not found"
           java -version
+
       # 🔹 Setup Java
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -33,26 +34,27 @@ jobs:
       # 🔹 Build
       - name: Build
         run: |
-          mvn -version
           mvn clean package -DskipTests
-      # 🔹 Code Coverage
+
+      # 🔹 Code Coverage with JaCoCo
       - name: Code Coverage
         run: mvn jacoco:report
-
+          
       # 🔹 SCA (Dependency Check)
       - name: Dependency Check
-        run: mvn org.owasp:dependency-check-maven:check -DfailOnError=false
+        run: mvn org.owasp:dependency-check-maven:check -Dformat=ALL -DfailOnError=false
 
       # 🔹 SAST (SonarQube)
       - name: SonarQube Scan
         run: |
           mvn sonar:sonar \
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-          -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json \
-          -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html \
-          -Dsonar.projectName=wezvatech
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json \
+            -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html \
+            -Dsonar.projectName=wezvatech
+
       # 🔹 Quality Gate
       - name: Sonar Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
@@ -73,16 +75,17 @@ jobs:
         run: |
           docker build -t $REGISTRY:latest .
           docker push $REGISTRY:latest
-      # 🔹 Scan Image (Trivy)
+
+      # 🔹 Scan Docker Image with Trivy
       - name: Scan Docker Image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: dikshat1024/democicd:latest
+          image-ref: $REGISTRY:latest
 
       # 🔹 Smoke Test
       - name: Smoke Test
         run: |
-          docker run -d --name smokerun -p 8080:8080 dikshat1024/democicd:latest
+          docker run -d --name smokerun -p 8080:8080 $REGISTRY:latest
           sleep 60
           chmod +x check.sh
           ./check.sh
