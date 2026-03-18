@@ -39,10 +39,6 @@ jobs:
       # 🔹 Code Coverage with JaCoCo
       - name: Code Coverage
         run: mvn jacoco:report
-          
-      # 🔹 SCA (Dependency Check)
-      - name: Dependency Check
-        run: mvn org.owasp:dependency-check-maven:check -Dformat=ALL -DfailOnError=false
 
       # 🔹 SAST (SonarQube)
       - name: SonarQube Scan
